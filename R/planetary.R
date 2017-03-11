@@ -114,10 +114,3 @@ get_join_y <- function(x1, y1, x2, y2, dist) {
   return(y)
 }
 
-x1 <- 1
-x2 <- 3
-y1 <- 0
-y2 <- 0
-dist <- 2
-get_join_x(0,0,0,1,1)
-get_join_y(0,0,0,1,1)
