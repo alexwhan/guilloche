@@ -32,13 +32,21 @@ ggdrawr_whole <- function(dat, x1 = "x1", y1 = "y1", x2 = "x2", y2 = "y2",
 #' @export
 #' @import ggplot2
 ggdrawr <- function(dat, join_x = "join_x", join_y = "join_y", print = TRUE) {
-  range_x <- range(dat[[join_x]])
-  range_y <- range(dat[[join_y]])
-  xlim_vec <- range_x - mean(range_x) * 1.1 + mean(range_x)
-  ylim_vec <- range_y - mean(range_y) * 1.1 + mean(range_y)
   geom_point(size = 0.2, colour = "darkgrey") +
     geom_path() +
-    xlim(xlim_vec) +
-    ylim(ylim_vec)
+    xlim(get_lims(dat, "join_x")) +
+    ylim(get_lims(dat, "join_y"))
 }
 
+#' Get axis limits to add to ggplot
+#'
+#' @param dat A dataframe
+#' @param var A variable name
+#'
+#' @return numeric vector of length 2
+#' @export
+#'
+get_lims <- function(dat, var) {
+  range_var <- range(dat[[var]])
+  lim_vec <- range_var - mean(range_var) * 1.1 + mean(range_var)
+}
