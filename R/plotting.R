@@ -32,8 +32,8 @@ ggdrawr_whole <- function(dat, x1 = "x1", y1 = "y1", x2 = "x2", y2 = "y2",
 #' @export
 #' @import ggplot2
 ggdrawr <- function(dat, join_x = "join_x", join_y = "join_y", print = TRUE) {
-  geom_point(size = 0.2, colour = "darkgrey") +
-    geom_path() +
+  ggplot(dat, aes_string(join_x, join_y)) +
+    geom_point(size = 0.2, colour = "darkgrey") +
     xlim(get_lims(dat, "join_x")) +
     ylim(get_lims(dat, "join_y"))
 }
@@ -48,5 +48,5 @@ ggdrawr <- function(dat, join_x = "join_x", join_y = "join_y", print = TRUE) {
 #'
 get_lims <- function(dat, var) {
   range_var <- range(dat[[var]])
-  lim_vec <- range_var - mean(range_var) * 1.1 + mean(range_var)
+  lim_vec <- (range_var - mean(range_var)) * 1.1 + mean(range_var)
 }
