@@ -33,7 +33,7 @@ get_y <- function(theta, rad, offset_y) {
 #' @param period Number of periods since beginning
 #' @param frequency Number of periods taken for a complete revolution
 #'
-#' @return
+#' @return angle in radians
 #' @export
 #'
 #' @examples
@@ -78,10 +78,10 @@ get_theta_diff <- function(x1, y1, x2, y2) {
 
 #' Get x of a hinged join between two points
 #'
-#' @param x1
-#' @param y1
-#' @param x2
-#' @param y2
+#' @param x1 x position of point1
+#' @param y1 y position of point1
+#' @param x2 x position of point2
+#' @param y2 y position of point2
 #' @param dist Distance from each point to the join
 #'
 #' @return numeric
@@ -97,10 +97,10 @@ get_join_x <- function(x1, y1, x2, y2, dist) {
 
 #' Get y of a hinged join between two points
 #'
-#' @param x1
-#' @param y1
-#' @param x2
-#' @param y2
+#' @param x1 x position of point1
+#' @param y1 y position of point1
+#' @param x2 x position of point2
+#' @param y2 y position of point2
 #' @param dist Distance from each point to the join
 #'
 #' @return numeric
