@@ -71,3 +71,27 @@ pp2 <- ggplot(dat, aes(join_x_p2, join_y_p2)) +
 print(pp2)
 #This one worked pretty well
 #dat_old <- dat
+
+dat$hinge_x1 <- with(dat, get_hinge_x(x1, y1, x2, y2, 40, 0.5))
+dat$hinge_y1 <- with(dat, get_hinge_y(x1, y1, x2, y2, 40, 0.5))
+dat$hinge_x2 <- with(dat, get_hinge_x(x2, y2, x1, y1, 40, 0.5))
+dat$hinge_y2 <- with(dat, get_hinge_y(x2, y2, x1, y1, 40, 0.5))
+
+get_hinge_x1 <- function(x1, y1, x2, y2, dist, join_prop) {
+  if(!(join_prop > 0 & join_prop < 1)) stop("join_prop needs to be between 0 and 1")
+  browser()
+  disp1 <- eucl_dist(x1, y1, x2, y2) / 2
+  theta_diff <- get_theta_diff(x1, y1, x2, y2)
+  theta2 <- acos(disp1 / (dist * join_prop))
+  x <- cos(theta_diff + theta2) * dist  + x1
+  return(x)
+
+}
+
+dat <- within(dat, {
+  join2_x <- get_join_x(hinge_x1, hinge_y1, hinge_x2, hinge_y2, dist = 40)
+  join2_y <- get_join_y(hinge_x1, hinge_y1, hinge_x2, hinge_y2, dist = 40)
+})
+
+ggplot(dat[1:1000,], aes(join2_x, join2_y)) +
+  geom_point()

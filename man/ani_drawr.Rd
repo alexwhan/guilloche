@@ -4,7 +4,7 @@
 \alias{ani_drawr}
 \title{Animate drawing of a drawr dataframe}
 \usage{
-ani_drawr(dat)
+ani_drawr(dat, filename, frames, crop = TRUE)
 }
 \arguments{
 \item{dat}{dataframe}

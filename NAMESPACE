@@ -2,6 +2,8 @@
 
 export(ani_drawr)
 export(eucl_dist)
+export(get_hinge_x)
+export(get_hinge_y)
 export(get_join_x)
 export(get_join_y)
 export(get_lims)

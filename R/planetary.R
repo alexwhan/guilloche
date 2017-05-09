@@ -114,3 +114,45 @@ get_join_y <- function(x1, y1, x2, y2, dist) {
   return(y)
 }
 
+#' Get x of articulation point
+#'
+#' @param x1 x position of point1
+#' @param y1 y position of point1
+#' @param x2 x position of point2
+#' @param y2 y position of point2
+#' @param dist Distance from each point to the articulation
+#' @param join_prop Proportion of dist at which the arms join (between 0 and 1)
+#'
+#' @return numeric
+#' @export
+get_hinge_x <- function(x1, y1, x2, y2, dist, join_prop) {
+  if(!(join_prop > 0 & join_prop < 1)) stop("join_prop needs to be between 0 and 1")
+
+  disp1 <- eucl_dist(x1, y1, x2, y2) / 2
+  theta_diff <- get_theta_diff(x1, y1, x2, y2)
+  theta2 <- acos(disp1 / (dist * join_prop))
+  x <- cos(theta_diff + theta2) * dist  + x1
+  return(x)
+
+}
+
+#' Get y of articulation point
+#'
+#' @param x1 x position of point1
+#' @param y1 y position of point1
+#' @param x2 x position of point2
+#' @param y2 y position of point2
+#' @param dist Distance from each point to the articulation
+#' @param join_prop Proportion of dist at which the arms join (between 0 and 1)
+#'
+#' @return numeric
+#' @export
+get_hinge_y <- function(x1, y1, x2, y2, dist, join_prop) {
+  if(!(join_prop > 0 & join_prop < 1)) stop("join_prop needs to be between 0 and 1")
+
+  disp1 <- eucl_dist(x1, y1, x2, y2) / 2
+  theta_diff <- get_theta_diff(x1, y1, x2, y2)
+  theta2 <- acos(disp1 / (dist * join_prop))
+  y <- abs(sin(theta_diff + theta2)) * dist + y1
+  return(y)
+}
