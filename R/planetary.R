@@ -96,3 +96,26 @@ get_scissor_offset <- function(x1, y1, x2, y2, segment_length, segment_number) {
   return(seg_offset * segment_number)
 }
 
+#' Get x of drawing point
+#'
+#' @param x1 x position of point 1
+#' @param y1 y position of point 1
+#' @param x2 x position of point 2
+#' @param y2 y position of point 2
+#' @param segment_length The length of scissor segments
+#' @param segment_number The number of scissor segments
+#'
+#' @return numeric
+#' @export
+#'
+#' @examples
+#' get_scissor_offset(0, 0, 1, 1, 2, 3)
+get_drawing_point <- function(x1, y1, x2, y2, segment_length, segment_number) {
+  mid_point_x <- mean(c(x1, x2))
+  mid_point_y <- mean(c(y1, y2))
+  offset <- get_scissor_offset(x1, y1, x2, y2, segment_length, segment_number)
+  theta <- get_theta_diff(x1, y1, x2, y2)
+  drawing_x <- offset * cos((pi / 2) - theta) + mid_point_x
+  drawing_y <- offset * sin((pi / 2) - theta) + mid_point_y
+  return(c(drawing_x, drawing_y))
+}
