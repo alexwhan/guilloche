@@ -76,6 +76,26 @@ get_theta_diff <- function(x1, y1, x2, y2) {
   atan2(y2 - y1, x2 - x1)
 }
 
+#' Get offset from the plane of two points for a given scissor set up
+#'
+#' @param x1 x position of point 1
+#' @param y1 y position of point 1
+#' @param x2 x position of point 2
+#' @param y2 y position of point 2
+#' @param segment_length The length of scissor segments
+#' @param segment_number The number of scissor segments
+#'
+#' @return numeric
+#' @export
+#'
+#' @examples
+#' get_scissor_offset(0, 0, 1, 1, 3, 1)
+get_scissor_offset <- function(x1, y1, x2, y2, segment_length, segment_number) {
+  mid_dist <- eucl_dist(x1, y1, x2, y2) / 2
+  seg_offset <- (segment_length ^ 2 - mid_dist ^ 2) ^ 0.5
+  return(seg_offset * segment_number)
+}
+
 #' Get x of a hinged join between two points
 #'
 #' @param x1 x position of point1
