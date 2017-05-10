@@ -104,18 +104,51 @@ get_scissor_offset <- function(x1, y1, x2, y2, segment_length, segment_number) {
 #' @param y2 y position of point 2
 #' @param segment_length The length of scissor segments
 #' @param segment_number The number of scissor segments
+#' @param return a string specifying whether to return "x", "y" or "both"
 #'
 #' @return numeric
 #' @export
 #'
 #' @examples
 #' get_scissor_offset(0, 0, 1, 1, 2, 3)
-get_drawing_point <- function(x1, y1, x2, y2, segment_length, segment_number) {
-  mid_point_x <- mean(c(x1, x2))
-  mid_point_y <- mean(c(y1, y2))
+get_drawing_point <- function(x1, y1, x2, y2, segment_length, segment_number,
+                              return = "both") {
+  mid_point_x <- x1 - (x1 - x2) / 2
+  mid_point_y <- y1 - (y1 - y2) / 2
   offset <- get_scissor_offset(x1, y1, x2, y2, segment_length, segment_number)
   theta <- get_theta_diff(x1, y1, x2, y2)
   drawing_x <- offset * cos((pi / 2) - theta) + mid_point_x
   drawing_y <- offset * sin((pi / 2) - theta) + mid_point_y
-  return(c(drawing_x, drawing_y))
+  if(return == "x") return(drawing_x)
+  if(return == "y") return(drawing_y)
+  else return(c(drawing_x, drawing_y))
+}
+
+#' Transform a position by orbiting around an origin
+#'
+#' @param x1 x position of point to be transformed
+#' @param y1 y position of point to be transformed
+#' @param x2 x position of origin
+#' @param y2 y position of origin
+#' @param theta
+#' @param return a string specifying whether to return "x", "y" or "both"
+#'
+#' @return numeric
+#' @export
+#'
+#' @examples
+#' orbit_transform(3,2,0,1,pi/4)
+orbit_transform <- function(x1, y1, x2, y2, theta, return = "both") {
+  theta_origin <- get_theta_diff(x1, y1, x2, y2)
+  theta_final <- theta_origin + theta
+  dist_origin <- eucl_dist(x1, y1, x2, y2)
+  x_origin <- x1 - x2
+  new_x_origin <- cos(theta_final) * dist_origin
+  y_origin <- y1 - y2
+  new_y_origin <- sin(theta_final) * dist_origin
+  new_x <- x1 - (x_origin - new_x_origin)
+  new_y <- y1 - (y_origin + new_y_origin)
+  if(return == "x") return(new_x)
+  if(return == "y") return(new_y)
+  else return(c(new_x, new_y))
 }
