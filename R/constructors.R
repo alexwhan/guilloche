@@ -23,3 +23,4 @@ define_orbit <- function(radius, offset, speed, parent_orbit = NULL) {
   class(orbit) <- c("orbit")
   return(orbit)
 }
+

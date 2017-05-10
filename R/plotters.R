@@ -1,4 +1,4 @@
-#' Get x coordinates of planetary location
+#' Get x coordinates of orbit location
 #'
 #' @param theta Angle in radians
 #' @param rad radius
@@ -13,7 +13,7 @@ get_x <- function(theta, rad, offset_x) {
   cos(theta) * rad + offset_x
 }
 
-#' Get y coordinates of planetary location
+#' Get y coordinates of orbit location
 #'
 #' @param theta Angle in radians
 #' @param rad radius
@@ -26,6 +26,20 @@ get_x <- function(theta, rad, offset_x) {
 #' get_y(pi / 6, 1, 0)
 get_y <- function(theta, rad, offset_y) {
   sin(theta) * rad + offset_y
+}
+
+#' Get (x, y) position of orbit location
+#'
+#' @param theta Angle in radians
+#' @param orbit Object of class orbit
+#'
+#' @return numeric vector
+#' @export
+#'
+get_orbit_position <- function(theta, orbit) {
+  x <- get_x(theta, orbit$radius, orbit$offset[1])
+  y <- get_y(theta, orbit$radius, orbit$offset[2])
+  return(tibble(x = x, y = y))
 }
 
 #' Get theta of disc
@@ -130,7 +144,7 @@ get_drawing_point <- function(x1, y1, x2, y2, segment_length, segment_number,
 #' @param y1 y position of point to be transformed
 #' @param x2 x position of origin
 #' @param y2 y position of origin
-#' @param theta
+#' @param theta Angle in radians
 #' @param return a string specifying whether to return "x", "y" or "both"
 #'
 #' @return numeric

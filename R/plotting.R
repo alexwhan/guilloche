@@ -12,7 +12,7 @@
 #' @export
 #' @import ggplot2
 ggdrawr_whole <- function(dat, x1 = "x1", y1 = "y1", x2 = "x2", y2 = "y2",
-                    join_x = "join_x", join_y = "join_y", print = TRUE) {
+                          join_x = "join_x", join_y = "join_y", print = TRUE) {
   p <- ggplot(dat) +
     geom_point(aes_string(x1, y1), colour = "darkgrey") +
     geom_point(aes_string(x2, y2), colour = "darkgrey") +

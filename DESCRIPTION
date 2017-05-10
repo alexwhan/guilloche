@@ -1,11 +1,11 @@
-Package: drawr
+Package: guilloche
 Type: Package
-Title: Simulate a Drawing Machine
+Title: Simulate a Guilloche Style Drawing Machine
 Version: 0.0.0.9000
 Author: Alex Whan
 Maintainer: Alex Whan <alexwhan@gmail.com>
-Description: Simulate planetary (is that the right word?) drawing machines, and
-    animate the output
+Description: Simulate Guilloche drawing machines, and
+    animate the output.
 License: MIT
 Encoding: UTF-8
 LazyData: true
