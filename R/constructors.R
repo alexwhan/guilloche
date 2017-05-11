@@ -8,7 +8,6 @@
 #'
 #' @export
 define_orbit <- function(radius, offset, speed, pantograph_point = NULL, parent_orbit = NULL) {
-  stopifnot(is.numeric(radius))
   stopifnot(is.numeric(offset))
   stopifnot(length(offset) == 2)
   stopifnot(is.numeric(speed))
@@ -24,7 +23,6 @@ define_orbit <- function(radius, offset, speed, pantograph_point = NULL, parent_
     else stopifnot(class(parent_orbit) == "orbit")
   }
   orbit <- list(
-    radius = radius,
     offset = offset,
     speed = speed
   )
@@ -34,3 +32,9 @@ define_orbit <- function(radius, offset, speed, pantograph_point = NULL, parent_
   return(orbit)
 }
 
+#' Check an orbit is legal
+#'
+#' @param orbit An object of class orbit
+check_orbit <- function(orbit) {
+
+}
