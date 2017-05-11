@@ -6,15 +6,11 @@
 #' @param parent_orbit Name of an orbit object produced by `define_orbit()`
 #'
 #' @export
-define_orbit <- function(offset, speed, parent_orbit = NULL, pantograph_point = NULL) {
+define_orbit <- function(offset, speed, parent_orbit = NULL) {
   stopifnot(is.numeric(offset))
   stopifnot(length(offset) == 2)
   stopifnot(is.numeric(speed))
   stopifnot(speed >= 0)
-  if(!is.null(pantograph_point)) {
-    stopifnot(length(pantograph_point) == 2)
-    stopifnot(class(pantograph_point) == "numeric")
-  }
   if(!is.null(parent_orbit)) {
     if(class(parent_orbit) == "character") stop("The parent_orbit argument should be an unquoted object name")
     parent_orbit_name <- deparse(substitute(parent_orbit))
