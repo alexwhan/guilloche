@@ -2,10 +2,11 @@
 #'
 #' @param period_range Integer vector of periods
 #' @param orbit Object of class orbit
+#' @param top_orbit logical. Is this the highest level orbit?
 #'
 #' @return numeric vector
 #'
-get_orbit_position <- function(period_range, orbit) {
+get_orbit_position <- function(period_range, orbit, top_orbit = TRUE) {
   stopifnot(class(period_range) == "integer")
   stopifnot(class(orbit) == "orbit")
 
@@ -13,22 +14,33 @@ get_orbit_position <- function(period_range, orbit) {
     if(exists(orbit$parent_orbit)) {
       stopifnot(class(get(orbit$parent_orbit)) == "orbit")
       theta <- get_theta(period_range, orbit)
-      browser()
+      # browser()
+      parent_orbit_centre <- get_orbit_position(period_range, get(orbit$parent_orbit), FALSE)
 
-      parent_orbit_centre <- get_orbit_position(period_range, get(orbit$parent_orbit))
+      new_x <- paste0("x_", orbit$parent_orbit)
+      new_y <- paste0("y_", orbit$parent_orbit)
 
-      x <- cos(theta) * eucl_dist(orbit$offset, c(0, 0)) + parent_orbit_centre$x
-      y <- sin(theta) * eucl_dist(orbit$offset, c(0, 0)) + parent_orbit_centre$y
+        names(parent_orbit_centre)[names(parent_orbit_centre) == "x"] <- new_x
+        names(parent_orbit_centre)[names(parent_orbit_centre) == "y"] <- new_y
 
-      return(tibble(x = x, y = y))
+      x <- cos(theta) * eucl_dist(orbit$offset, c(0, 0)) + parent_orbit_centre[[paste0("x_", orbit$parent_orbit)]]
+      y <- sin(theta) * eucl_dist(orbit$offset, c(0, 0)) + parent_orbit_centre[[paste0("y_", orbit$parent_orbit)]]
+
+      orbit_center <- tibble(x = x, y = y)
+      if(top_orbit){
+        new_x <- paste0("x_", deparse(substitute(orbit)))
+        new_y <- paste0("y_", deparse(substitute(orbit)))
+        names(orbit_center)[names(orbit_center) == "x"] <- new_x
+        names(orbit_center)[names(orbit_center) == "y"] <- new_y
+      }
+      output_df <- dplyr::bind_cols(parent_orbit_centre, orbit_center)
+      return(output_df)
     } else stop(paste("Parent orbit", orbit$parent_orbit, "does not exist"))
   } else {
 
     x <- rep(orbit$offset[1], length(period_range))
     y <- rep(orbit$offset[2], length(period_range))
-    orbit_name <- deparse(substitute(orbit))
     out_df <- tibble(x = x, y = y)
-    # setNames(out_df, paste0(names(out_df), "_", orbit_name))
   }
 }
 
