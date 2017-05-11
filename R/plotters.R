@@ -1,18 +1,3 @@
-#' Get x coordinates of orbit location
-#'
-#' @param theta Angle in radians
-#' @param rad radius
-#' @param offset_x x position of center
-#'
-#' @return numeric
-#' @export
-#'
-#' @examples
-#' get_x(pi / 6, 1, 0)
-get_x <- function(theta, rad, offset_x) {
-  cos(theta) * rad + offset_x
-}
-
 #' Get y coordinates of orbit location
 #'
 #' @param theta Angle in radians
@@ -28,31 +13,38 @@ get_y <- function(theta, rad, offset_y) {
   sin(theta) * rad + offset_y
 }
 
-#' Get (x, y) position of orbit location
+#' Get (x, y) position of orbit center
 #'
 #' @param theta Angle in radians
 #' @param orbit Object of class orbit
 #'
 #' @return numeric vector
-#' @export
 #'
 get_orbit_position <- function(period_range, orbit) {
-  stopifnot(class(parent_orbit) == "character")
+  stopifnot(class(period_range) == "integer")
   stopifnot(class(orbit) == "orbit")
+
   if(!is.null(orbit$parent_orbit)) {
     if(exists(orbit$parent_orbit)) {
-      parent_orbit <- get(parent_orbit)
-      offset_tbl <- get_orbit_position(period_range, parent_orbit)
+      stopifnot(class(get(orbit$parent_orbit)) == "orbit")
+      theta <- get_theta(period_range, orbit)
+      browser()
+
+      parent_orbit_centre <- get_orbit_position(period_range, get(orbit$parent_orbit))
+
+      x <- cos(theta) * eucl_dist(orbit$offset, c(0, 0)) + parent_orbit_centre$x
+      y <- sin(theta) * eucl_dist(orbit$offset, c(0, 0)) + parent_orbit_centre$y
+
+      return(tibble(x = x, y = y))
     } else stop(paste("Parent orbit", orbit$parent_orbit, "does not exist"))
+  } else {
+
+    x <- rep(orbit$offset[1], length(period_range))
+    y <- rep(orbit$offset[2], length(period_range))
+    orbit_name <- deparse(substitute(orbit))
+    out_df <- tibble(x = x, y = y)
+    # setNames(out_df, paste0(names(out_df), "_", orbit_name))
   }
-
-  theta <- get_theta(period_range, orbit$speed)
-
-  x <- get_x(theta, orbit$radius, orbit$offset[1])
-  y <- get_y(theta, orbit$radius, orbit$offset[2])
-  orbit_name <- deparse(substitute(orbit))
-  out_df <- tibble(x = x, y = y)
-  setNames(out_df, paste0(names(out_df), "_", orbit_name))
 }
 
 get_parent_offset <- function(orbit) {
@@ -73,7 +65,6 @@ get_parent_offset <- function(orbit) {
 #' @param orbit An object of class orbit
 #'
 #' @return angle in radians
-#' @export
 #'
 #' @examples
 #' get_theta(10, 100)
@@ -93,21 +84,36 @@ get_orbit_theta <- function(period_range, orbit) {
   }
 }
 
+get_orbit_origin <- function(period_range, orbit) {
+  stopifnot(class(period_range) == "integer")
+  stopifnot(class(orbit) == "orbit")
+
+  if(!is.null(orbit$parent_orbit)) {
+    if(exists(orbit$parent_orbit)) {
+      origin_df <- get_orbit_origin(get(orbit$parent_orbit))
+    } else {
+      stop("Parent orbit is named but doesn't exist")
+    }
+  } else {
+    theta <- get_theta(period_range, orbit)
+
+    return()
+  }
+}
 #' Get euclidean distance between two points
 #'
-#' @param x1 x position of point 1
-#' @param y1 y position of point 1
-#' @param x2 x position of point 2
-#' @param y2 y position of point 2
+#' @param pos1 A numeric vector of length 2 defining the first position
+#' @param pos2 A numeric vector of length 2 defining the second position
 #'
 #' @return numeric
-#' @export
 #'
 #' @examples
-#' eucl_dist(0, 0, 1, 1)
-eucl_dist <- function(x1, y1, x2, y2) {
-  x_disp <- abs(x1 - x2)
-  y_disp <- abs(y1 - y2)
+#' eucl_dist(c(0, 0), c(1, 1))
+eucl_dist <- function(pos1, pos2) {
+  stopifnot(length(pos1) == 2 & length(pos2) == 2)
+  stopifnot(class(pos1) == "numeric" & class(pos2) == "numeric")
+  x_disp <- abs(pos1[1] - pos2[1])
+  y_disp <- abs(pos1[2] - pos2[2])
   (x_disp ^ 2 + y_disp ^ 2) ^ 0.5
 }
 

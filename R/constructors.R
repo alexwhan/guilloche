@@ -1,13 +1,12 @@
 #' Define a planetary orbit
 #'
-#' @param radius The radius of the orbit around its origin
 #' @param offset The position of the orbit center relative to the parent orbit center
 #' @param speed The number of periods taken for a complete revolution
 #' @param pantograph_point The position of the pantograph attachment relative to the orbit center
 #' @param parent_orbit Name of an orbit object produced by `define_orbit()`
 #'
 #' @export
-define_orbit <- function(radius, offset, speed, pantograph_point = NULL, parent_orbit = NULL) {
+define_orbit <- function(offset, speed, parent_orbit = NULL, pantograph_point = NULL) {
   stopifnot(is.numeric(offset))
   stopifnot(length(offset) == 2)
   stopifnot(is.numeric(speed))
