@@ -36,24 +36,49 @@ get_y <- function(theta, rad, offset_y) {
 #' @return numeric vector
 #' @export
 #'
-get_orbit_position <- function(theta, orbit) {
+get_orbit_position <- function(period_range, orbit) {
+  stopifnot(class(parent_orbit) == "character")
+  stopifnot(class(orbit) == "orbit")
+  if(!is.null(orbit$parent_orbit)) {
+    if(exists(orbit$parent_orbit)) {
+      parent_orbit <- get(parent_orbit)
+      offset_tbl <- get_orbit_position(period_range, parent_orbit)
+    } else stop(paste("Parent orbit", orbit$parent_orbit, "does not exist"))
+  }
+
+  theta <- get_theta(period_range, orbit$speed)
+
   x <- get_x(theta, orbit$radius, orbit$offset[1])
   y <- get_y(theta, orbit$radius, orbit$offset[2])
-  return(tibble(x = x, y = y))
+  orbit_name <- deparse(substitute(orbit))
+  out_df <- tibble(x = x, y = y)
+  setNames(out_df, paste0(names(out_df), "_", orbit_name))
+}
+
+get_parent_offset <- function(orbit) {
+  stopifnot(class(orbit) == "orbit")
+  if(!is.null(orbit$parent_orbit)) {
+    if(exists(orbit$parent_orbit)) {
+      parent_offset <- get(orbit$parent_orbit)$offset + get_parent_offset(get(orbit$parent_orbit))
+      return(parent_offset)
+    } else {
+      stop("Parent orbit is named but doesn't exist")
+    }
+  } else return(c(0, 0))
 }
 
 #' Get theta of disc
 #'
 #' @param period Number of periods since beginning
-#' @param frequency Number of periods taken for a complete revolution
+#' @param speed Number of periods taken for a complete revolution
 #'
 #' @return angle in radians
 #' @export
 #'
 #' @examples
 #' get_theta(10, 100)
-get_theta <- function(period, frequency) {
-  (2 * pi / frequency) * (period %% frequency)
+get_theta <- function(period, speed) {
+  (2 * pi / speed) * (period %% speed)
 }
 
 #' Get euclidean distance between two points
