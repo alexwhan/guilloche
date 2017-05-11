@@ -67,18 +67,30 @@ get_parent_offset <- function(orbit) {
   } else return(c(0, 0))
 }
 
-#' Get theta of disc
+#' Get theta of orbit
 #'
-#' @param period Number of periods since beginning
-#' @param speed Number of periods taken for a complete revolution
+#' @param period_range Integer vector of periods
+#' @param orbit An object of class orbit
 #'
 #' @return angle in radians
 #' @export
 #'
 #' @examples
 #' get_theta(10, 100)
-get_theta <- function(period, speed) {
-  (2 * pi / speed) * (period %% speed)
+get_orbit_theta <- function(period_range, orbit) {
+  stopifnot(class(period_range) == "integer")
+  stopifnot(class(orbit) == "orbit")
+  base_theta <- (2 * pi / orbit$speed) * (period_range %% orbit$speed)
+  if(!is.null(orbit$parent_orbit)) {
+    if(exists(orbit$parent_orbit)) {
+      parent_theta <- get_theta(period_range, get(orbit$parent_orbit))
+      return((parent_theta + base_theta) %% (2 * pi))
+    } else {
+      stop("Parent orbit is named but doesn't exist")
+    }
+  } else {
+    return(base_theta)
+  }
 }
 
 #' Get euclidean distance between two points
