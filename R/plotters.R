@@ -1,21 +1,6 @@
-#' Get y coordinates of orbit location
-#'
-#' @param theta Angle in radians
-#' @param rad radius
-#' @param offset_y y position of center
-#'
-#' @return numeric
-#' @export
-#'
-#' @examples
-#' get_y(pi / 6, 1, 0)
-get_y <- function(theta, rad, offset_y) {
-  sin(theta) * rad + offset_y
-}
-
 #' Get (x, y) position of orbit center
 #'
-#' @param theta Angle in radians
+#' @param period_range Integer vector of periods
 #' @param orbit Object of class orbit
 #'
 #' @return numeric vector
