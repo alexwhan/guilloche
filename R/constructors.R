@@ -27,6 +27,12 @@ define_orbit <- function(offset, speed, parent_orbit = NULL) {
   return(orbit)
 }
 
+check_orbit <- function(orbit) {
+  stopifnot(class(orbit) == "orbit")
+  if(!is.null(orbit$parent_orbit)) stopifnot(check_orbit(get(orbit$parent_orbit)))
+  return(TRUE)
+}
+
 #' Define a pantograph
 #'
 #' @param orbit1 The first orbit it is attached to
@@ -48,10 +54,12 @@ define_pantograph <- function(orbit1, orbit2, offset1 = 0, offset2 = 0, n_segmen
   stopifnot(segment_length > 0 & n_segments > 0)
   stopifnot(exists(deparse(substitute(orbit1))))
   stopifnot(exists(deparse(substitute(orbit2))))
+  stopifnot(check_orbit(orbit1) & check_orbit(orbit2))
   pg <- list(orbit1 = orbit1,
              orbit2 = orbit2,
              offset1 = offset1,
              offset2 = offset2,
              n_segments = n_segments,
              segment_length = segment_length)
+  class(pg) <- "pantograph"
 }
