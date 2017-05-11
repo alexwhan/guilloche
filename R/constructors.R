@@ -31,9 +31,31 @@ define_orbit <- function(offset, speed, parent_orbit = NULL, pantograph_point = 
   return(orbit)
 }
 
-#' Check an orbit is legal
+#' Define a pantograph
 #'
-#' @param orbit An object of class orbit
-check_orbit <- function(orbit) {
-
+#' @param orbit1 The first orbit it is attached to
+#' @param orbit2 The second orbit it is attached to
+#' @param offset1 The distance of the attachment from the origin of orbit1
+#' @param offset2 The distance of the attachment from the origin of orbit2
+#' @param n_segments The number of segments in the pantograph
+#' @param segment_length The length of each segment
+#'
+#' @return
+#' @export
+#'
+#' @examples
+define_pantograph <- function(orbit1, orbit2, offset1 = 0, offset2 = 0, n_segments = 3, segment_length = 1) {
+  stopifnot(class(orbit1) == "orbit" & class(orbit2) == "orbit")
+  stopifnot(class(offset1) == "numeric" & class(offset2) == "numeric")
+  stopifnot(class(n_segments) == "integer")
+  stopifnot(class(segment_length) == "numeric")
+  stopifnot(segment_length > 0 & n_segments > 0)
+  stopifnot(exists(deparse(substitute(orbit1))))
+  stopifnot(exists(deparse(substitute(orbit2))))
+  pg <- list(orbit1 = orbit1,
+             orbit2 = orbit2,
+             offset1 = offset1,
+             offset2 = offset2,
+             n_segments = n_segments,
+             segment_length = segment_length)
 }
