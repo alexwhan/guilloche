@@ -49,8 +49,8 @@ check_orbit <- function(orbit) {
 define_pantograph <- function(orbit1, orbit2, offset1 = 0, offset2 = 0, n_segments = 3, segment_length = 1) {
   stopifnot(class(orbit1) == "orbit" & class(orbit2) == "orbit")
   stopifnot(class(offset1) == "numeric" & class(offset2) == "numeric")
-  stopifnot(class(n_segments) == "integer")
-  stopifnot(class(segment_length) == "numeric")
+  # stopifnot(class(n_segments) == "integer")
+  # stopifnot(class(segment_length) == "numeric")
   stopifnot(segment_length > 0 & n_segments > 0)
   stopifnot(exists(deparse(substitute(orbit1))))
   stopifnot(exists(deparse(substitute(orbit2))))
@@ -62,4 +62,5 @@ define_pantograph <- function(orbit1, orbit2, offset1 = 0, offset2 = 0, n_segmen
              n_segments = n_segments,
              segment_length = segment_length)
   class(pg) <- "pantograph"
+  return(pg)
 }
