@@ -56,11 +56,44 @@ define_pantograph <- function(orbit1, orbit2, offset1 = 0, offset2 = 0, n_segmen
   stopifnot(exists(deparse(substitute(orbit2))))
   stopifnot(check_orbit(orbit1) & check_orbit(orbit2))
   pg <- list(orbit1 = orbit1,
+             orbit1_name = deparse(substitute(orbit1)),
              orbit2 = orbit2,
+             orbit2_name = deparse(substitute(orbit2)),
              offset1 = offset1,
              offset2 = offset2,
              n_segments = n_segments,
              segment_length = segment_length)
   class(pg) <- "pantograph"
   return(pg)
+}
+
+#' Update a pantograph
+#'
+#' @param pantograph Object of class pantograph, produced by `define_pantograph()`
+#' @param orbit1 Optional, object of class orbit
+#' @param orbit2 Optional, object of class orbit
+#' @param offset1 Optional, the distance of the attachment from the origin of orbit1
+#' @param offset2 Optional, the distance of the attachment from the origin of orbit2
+#' @param n_segments Optional, the number of segments in the pantograph
+#' @param segment_length Optional, the length of each segment
+#'
+#' @return pantograph
+#' @export
+#'
+update_pantograph <- function(pantograph, orbit1 = NULL, orbit2 = NULL, offset1 = NULL, offset2 = NULL, n_segments = NULL, segment_length = NULL) {
+  if(!exists(pantograph$orbit1_name)) stop(paste("Orbit", pantograph$orbit1_name, "does not exist"))
+  if(!exists(pantograph$orbit2_name)) stop(paste("Orbit", pantograph$orbit2_name, "does not exist"))
+  if(is.null(orbit1)) pantograph$orbit1 <- get(pantograph$orbit1_name) else {
+    pantograph$orbit1 <- orbit1
+    pantograph$orbit1_name <- deparse(substitute(orbit1))
+  }
+  if(is.null(orbit2)) pantograph$orbit2 <- get(pantograph$orbit2_name) else {
+    pantograph$orbit2 <- orbit2
+    pantograph$orbit2_name <- deparse(substitute(orbit2))
+  }
+  if(!is.null(offset1)) pantograph$offset1 <- offset1
+  if(!is.null(offset2)) pantograph$offset2 <- offset2
+  if(!is.null(n_segments)) pantograph$n_segments <- n_segments
+  if(!is.null(segment_length)) pantograph$segment_length <- segment_length
+  return(pantograph)
 }
