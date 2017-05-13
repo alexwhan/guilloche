@@ -42,15 +42,19 @@ check_orbit <- function(orbit) {
 #' @param n_segments The number of segments in the pantograph
 #' @param segment_length The length of each segment
 #'
-#' @return
+#' @return pantograph
 #' @export
 #'
 #' @examples
+#' orbit1 <- define_orbit(c(0, 25), 1000)
+#' orbit2 <- define_orbit(c(0, 8), 100, parent_orbit = orbit1)
+#' orbit3 <- define_orbit(c(0, 1), 20, parent_orbit = orbit2)
+#' pan <- define_pantograph(orbit3, orbit3, c(0, 1), c(0, 5), 3, 4)
 define_pantograph <- function(orbit1, orbit2, offset1 = 0, offset2 = 0, n_segments = 3, segment_length = 1) {
   stopifnot(class(orbit1) == "orbit" & class(orbit2) == "orbit")
   stopifnot(class(offset1) == "numeric" & class(offset2) == "numeric")
-  # stopifnot(class(n_segments) == "integer")
-  # stopifnot(class(segment_length) == "numeric")
+  stopifnot(class(n_segments) == "numeric")
+  stopifnot(class(segment_length) == "numeric")
   stopifnot(segment_length > 0 & n_segments > 0)
   stopifnot(exists(deparse(substitute(orbit1))))
   stopifnot(exists(deparse(substitute(orbit2))))
