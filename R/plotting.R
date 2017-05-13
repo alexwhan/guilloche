@@ -72,6 +72,10 @@ draw_machine <- function(pantograph) {
   dat2$orbit[dat2$orbit == "pantograph$orbit2"] <- pantograph$orbit2_name
   p <- ggplot(rbind(dat1, dat2), aes(x, y)) + geom_path(aes(colour = orbit), show.legend = FALSE) +
     geom_point(aes(colour = orbit)) +
-    theme_void()
+    theme_void() +
+    theme(legend.title = element_blank()) +
+    coord_fixed() +
+    labs(title = paste("Setup for", deparse(substitute(pantograph))),
+         subtitle = "Path around which orbit centers will travel")
   print(p)
 }
