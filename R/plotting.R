@@ -51,10 +51,25 @@ get_lims <- function(dat, var) {
   lim_vec <- (range_var - mean(range_var)) * 1.1 + mean(range_var)
 }
 
+#' Draw basic state of drawing machine
+#'
+#' @param pantograph Object of class pantograph produced by `define_pantograph`
+#'
+#' @return ggplot objects
+#' @export
+#'
+#' @examples
+#' orbit1 <- define_orbit(c(0, 25), 1000)
+#' orbit2 <- define_orbit(c(0, 8), 100, parent_orbit = orbit1)
+#' orbit3 <- define_orbit(c(0, 1), 20, parent_orbit = orbit2)
+#' pan <- define_pantograph(orbit3, orbit3, c(0, 1), c(0, 5), 3, 4)
+#' draw_machine(pan)
 draw_machine <- function(pantograph) {
   stopifnot(class(pantograph) == "pantograph")
+  browser()
   dat1 <- get_complete_position(pantograph$orbit1)
-  p <- ggplot(temp, aes(x, y)) + geom_path(aes(colour = orbit), show.legend = FALSE) +
+  dat2 <- get_complete_position(pantograph$orbit2)
+  p <- ggplot(rbind(dat1, dat2), aes(x, y)) + geom_path(aes(colour = orbit), show.legend = FALSE) +
     geom_point(aes(colour = orbit)) +
     theme_void()
   print(p)

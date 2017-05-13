@@ -3,6 +3,7 @@
 export(ani_drawr)
 export(define_orbit)
 export(define_pantograph)
+export(draw_machine)
 export(get_drawing_point)
 export(get_lims)
 export(get_scissor_offset)
