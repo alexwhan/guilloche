@@ -50,3 +50,12 @@ get_lims <- function(dat, var) {
   range_var <- range(dat[[var]])
   lim_vec <- (range_var - mean(range_var)) * 1.1 + mean(range_var)
 }
+
+draw_machine <- function(pantograph) {
+  stopifnot(class(pantograph) == "pantograph")
+  dat1 <- get_complete_position(pantograph$orbit1)
+  p <- ggplot(temp, aes(x, y)) + geom_path(aes(colour = orbit), show.legend = FALSE) +
+    geom_point(aes(colour = orbit)) +
+    theme_void()
+  print(p)
+}
