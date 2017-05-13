@@ -4,16 +4,16 @@
 \alias{define_orbit}
 \title{Define a planetary orbit}
 \usage{
-define_orbit(radius, offset, speed, parent_orbit = NULL)
+define_orbit(offset, speed, parent_orbit = NULL)
 }
 \arguments{
-\item{radius}{The radius of the orbit around its origin}
-
-\item{offset}{The position of the orbit center relative to the absolute origin}
+\item{offset}{The position of the orbit center relative to the parent orbit center}
 
 \item{speed}{The number of periods taken for a complete revolution}
 
-\item{parent_orbit}{}
+\item{parent_orbit}{Name of an orbit object produced by `define_orbit()`}
+
+\item{pantograph_point}{The position of the pantograph attachment relative to the orbit center}
 }
 \description{
 Define a planetary orbit

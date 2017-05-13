@@ -3,18 +3,17 @@
 #' @param period_range Integer vector of periods
 #' @param orbit Object of class orbit
 #' @param top_orbit logical. Is this the highest level orbit?
+#' @param relative logical. Should positions be calculated relative to parent orbits?
 #'
 #' @return numeric vector
 #'
-get_orbit_position <- function(period_range, orbit, top_orbit = TRUE) {
+get_orbit_position <- function(orbit, period_range = 1:100, top_orbit = TRUE) {
   stopifnot(class(period_range) == "integer")
   stopifnot(class(orbit) == "orbit")
 
   if(!is.null(orbit$parent_orbit)) {
     if(exists(orbit$parent_orbit)) {
       stopifnot(class(get(orbit$parent_orbit)) == "orbit")
-      theta <- get_theta(period_range, orbit)
-      # browser()
       parent_orbit_centre <- get_orbit_position(period_range, get(orbit$parent_orbit), FALSE)
 
       new_x <- paste0("x_", orbit$parent_orbit)
@@ -44,18 +43,49 @@ get_orbit_position <- function(period_range, orbit, top_orbit = TRUE) {
   }
 }
 
-get_parent_offset <- function(orbit) {
+#' Get positions of complete orbit at theta = 0
+#'
+#' @param orbit
+#'
+#' @return
+#'
+get_complete_position <- function(orbit, top_orbit = TRUE) {
   stopifnot(class(orbit) == "orbit")
+
   if(!is.null(orbit$parent_orbit)) {
     if(exists(orbit$parent_orbit)) {
-      parent_offset <- get(orbit$parent_orbit)$offset + get_parent_offset(get(orbit$parent_orbit))
-      return(parent_offset)
-    } else {
-      stop("Parent orbit is named but doesn't exist")
-    }
-  } else return(c(0, 0))
+      stopifnot(class(get(orbit$parent_orbit)) == "orbit")
+      theta <- seq(0, pi * 2, length.out = 100)
+      parent_orbit_centre <- get_complete_position(get(orbit$parent_orbit), FALSE)
+      parent_orbit_centre$orbit[is.na(parent_orbit_centre$orbit)] <- orbit$parent_orbit
+
+      x <- cos(theta) * eucl_dist(orbit$offset, c(0, 0)) +
+        get_total_offset(get(orbit$parent_orbit))[1]
+      y <- sin(theta) * eucl_dist(orbit$offset, c(0, 0)) +
+        get_total_offset(get(orbit$parent_orbit))[2]
+
+      out_df <- tibble(x = x, y = y)
+      if(top_orbit) out_df$orbit <- deparse(substitute(orbit)) else {
+        out_df$orbit <- NA
+      }
+
+      out_df <- dplyr::bind_rows(parent_orbit_centre, out_df)
+      return(out_df)
+    } else stop(paste("Parent orbit", orbit$parent_orbit, "does not exist"))
+  } else {
+
+    x <- orbit$offset[1]
+    y <- orbit$offset[2]
+    out_df <- tibble(x = x, y = y, orbit = NA)
+  }
 }
 
+get_total_offset <- function(orbit) {
+  if(!is.null(orbit$parent_orbit)) {
+    return(get_total_offset(get(orbit$parent_orbit)) + orbit$offset)
+  }
+  return(orbit$offset)
+}
 #' Get theta of orbit
 #'
 #' @param period_range Integer vector of periods

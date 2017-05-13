@@ -2,19 +2,23 @@
 % Please edit documentation in R/plotters.R
 \name{get_orbit_position}
 \alias{get_orbit_position}
-\title{Get (x, y) position of orbit location}
+\title{Get (x, y) position of orbit center}
 \usage{
-get_orbit_position(theta, orbit)
+get_orbit_position(orbit, period_range = 1:100, top_orbit = TRUE)
 }
 \arguments{
-\item{theta}{Angle in radians}
-
 \item{orbit}{Object of class orbit}
+
+\item{period_range}{Integer vector of periods}
+
+\item{top_orbit}{logical. Is this the highest level orbit?}
+
+\item{relative}{logical. Should positions be calculated relative to parent orbits?}
 }
 \value{
 numeric vector
 }
 \description{
-Get (x, y) position of orbit location
+Get (x, y) position of orbit center
 }
 

@@ -4,16 +4,12 @@
 \alias{eucl_dist}
 \title{Get euclidean distance between two points}
 \usage{
-eucl_dist(x1, y1, x2, y2)
+eucl_dist(pos1, pos2)
 }
 \arguments{
-\item{x1}{x position of point 1}
+\item{pos1}{A numeric vector of length 2 defining the first position}
 
-\item{y1}{y position of point 1}
-
-\item{x2}{x position of point 2}
-
-\item{y2}{y position of point 2}
+\item{pos2}{A numeric vector of length 2 defining the second position}
 }
 \value{
 numeric
@@ -22,6 +18,6 @@ numeric
 Get euclidean distance between two points
 }
 \examples{
-eucl_dist(0, 0, 1, 1)
+eucl_dist(c(0, 0), c(1, 1))
 }
 
