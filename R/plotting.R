@@ -66,9 +66,10 @@ get_lims <- function(dat, var) {
 #' draw_machine(pan)
 draw_machine <- function(pantograph) {
   stopifnot(class(pantograph) == "pantograph")
-  browser()
   dat1 <- get_complete_position(pantograph$orbit1)
+  dat1$orbit[dat1$orbit == "pantograph$orbit1"] <- pantograph$orbit1_name
   dat2 <- get_complete_position(pantograph$orbit2)
+  dat2$orbit[dat2$orbit == "pantograph$orbit2"] <- pantograph$orbit2_name
   p <- ggplot(rbind(dat1, dat2), aes(x, y)) + geom_path(aes(colour = orbit), show.legend = FALSE) +
     geom_point(aes(colour = orbit)) +
     theme_void()
