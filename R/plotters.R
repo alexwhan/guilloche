@@ -23,7 +23,7 @@ get_orbit_position <- function(orbit, period_range = 1:100, top_orbit = TRUE) {
       names(parent_orbit_centre)[names(parent_orbit_centre) == "x"] <- new_x
       names(parent_orbit_centre)[names(parent_orbit_centre) == "y"] <- new_y
 
-      theta <- get_orbit_theta(get(orbit$parent_orbit), period_range)
+      theta <- get_orbit_theta(get(orbit$parent_orbit), period_range) + get_initial_theta(orbit)
 
       x <- cos(theta) * eucl_dist(orbit$offset, c(0, 0)) + parent_orbit_centre[[paste0("x_", orbit$parent_orbit)]]
       y <- sin(theta) * eucl_dist(orbit$offset, c(0, 0)) + parent_orbit_centre[[paste0("y_", orbit$parent_orbit)]]
@@ -124,7 +124,7 @@ get_orbit_theta <- function(orbit, period_range) {
   base_theta <- (2 * pi / orbit$speed) * (period_range %% orbit$speed)
   if(!is.null(orbit$parent_orbit)) {
     if(exists(orbit$parent_orbit)) {
-      parent_theta <- get_theta(period_range, get(orbit$parent_orbit))
+      parent_theta <- get_orbit_theta(get(orbit$parent_orbit), period_range)
       return((parent_theta + base_theta) %% (2 * pi))
     } else {
       stop("Parent orbit is named but doesn't exist")
