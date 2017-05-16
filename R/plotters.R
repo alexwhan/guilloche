@@ -169,18 +169,16 @@ eucl_dist <- function(pos1, pos2) {
 
 #' Get angle of point 2 from point 1
 #'
-#' @param x1 x position of point 1
-#' @param y1 y position of point 1
-#' @param x2 x position of point 2
-#' @param y2 y position of point 2
+#' @param pos1 The first position, numeric length 2
+#' @param pos2 The second position, numeric length 2
 #'
 #' @return numeric
 #' @export
 #'
 #' @examples
-#' get_theta_diff(0, 0, 1, 1)
-get_theta_diff <- function(x1, y1, x2, y2) {
-  atan2(y2 - y1, x2 - x1)
+#' get_theta_diff(c(0, 0), c(1, 1))
+get_theta_diff <- function(pos1, pos2) {
+  atan2(pos2[2] - pos1[2], pos2[1] - pos1[1])
 }
 
 #' Get offset from the plane of two points for a given scissor set up
@@ -256,4 +254,18 @@ orbit_transform <- function(x1, y1, x2, y2, theta, return = "both") {
   if(return == "x") return(new_x)
   if(return == "y") return(new_y)
   else return(c(new_x, new_y))
+}
+
+#' Get the starting angle of an orbit relative to its parent
+#'
+#' @param orbit Object of class orbit
+#'
+#' @return Angle in radians
+#'
+#' @examples
+#' orbit_base <- define_orbit(c(25, 0), 1000)
+#' orbit2 <- define_orbit(c(8, 8), 100, parent_orbit = orbit_base)
+#' get_initial_theta(orbit2)
+get_initial_theta <- function(orbit) {
+  get_theta_diff(c(0, 0), orbit$offset)
 }
