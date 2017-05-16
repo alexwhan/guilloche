@@ -56,7 +56,17 @@ get_machine_positions <- function(pantograph, period_range = 1:100){
   orbit2_pos <- get_orbit_position(pantograph$orbit2, period_range)
   names(orbit2_pos)[2:3] <- paste0(c("x", "y"), "_", pantograph$orbit2_name)
 
-  orbit_pos <- dplyr::bind_cols(orbit1_pos, orbit2_pos)
+  anchor1_theta <- get_orbit_theta(pantograph$orbit1, period_range)
+  x_anchor1 <- cos(anchor1_theta) * eucl_dist(pantograph$offset1, c(0, 0)) + orbit1_pos[[paste0("x_", pantograph$orbit1_name)]]
+  y_anchor1 <- sin(anchor1_theta) * eucl_dist(pantograph$offset1, c(0, 0)) + orbit1_pos[[paste0("y_", pantograph$orbit1_name)]]
+
+  anchor2_theta <- get_orbit_theta(pantograph$orbit2, period_range)
+  x_anchor2 <- cos(anchor2_theta) * eucl_dist(pantograph$offset2, c(0, 0)) + orbit2_pos[[paste0("x_", pantograph$orbit2_name)]]
+  y_anchor2 <- sin(anchor2_theta) * eucl_dist(pantograph$offset2, c(0, 0)) + orbit2_pos[[paste0("y_", pantograph$orbit2_name)]]
+
+  orbit_pos <- dplyr::bind_cols(orbit1_pos, orbit2_pos,
+                                tibble(x_anchor1 = x_anchor1, y_anchor1 = y_anchor1,
+                                       x_anchor2 = x_anchor2, y_anchor2 = y_anchor2))
   orbit_pos <- orbit_pos[,unique(names(orbit_pos))]
 
   orbit_pos_g <- tidyr::gather(orbit_pos, key, value, -period)
@@ -181,20 +191,18 @@ get_theta_diff <- function(pos1, pos2) {
   atan2(pos2[2] - pos1[2], pos2[1] - pos1[1])
 }
 
-#' Get offset from the plane of two points for a given scissor set up
+#' Get offset from the plane of anchor points for a given pantograph set up
 #'
-#' @param x1 x position of point 1
-#' @param y1 y position of point 1
-#' @param x2 x position of point 2
-#' @param y2 y position of point 2
+#' @param pos1 First anchor point of pantograph
+#' @param pos2 Second anchor point of pantograph
 #' @param segment_length The length of scissor segments
 #' @param segment_number The number of scissor segments
 #'
 #' @return numeric
 #' @examples
-#' get_scissor_offset(0, 0, 1, 1, 3, 1)
-get_scissor_offset <- function(x1, y1, x2, y2, segment_length, segment_number) {
-  mid_dist <- eucl_dist(x1, y1, x2, y2) / 2
+#' get_scissor_offset(c(0, 0), c(1, 1), 3, 1)
+get_anchor_position <- function(pos1, pos2, segment_length, segment_number) {
+  mid_dist <- eucl_dist(pos1, pos2) / 2
   seg_offset <- (segment_length ^ 2 - mid_dist ^ 2) ^ 0.5
   return(seg_offset * segment_number)
 }
