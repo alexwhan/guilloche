@@ -14,25 +14,29 @@ get_orbit_position <- function(orbit, period_range = 1:100, top_orbit = TRUE) {
   if(!is.null(orbit$parent_orbit)) {
     if(exists(orbit$parent_orbit)) {
       stopifnot(class(get(orbit$parent_orbit)) == "orbit")
-      parent_orbit_centre <- get_orbit_position(period_range, get(orbit$parent_orbit), FALSE)
+      parent_orbit_centre <- get_orbit_position(get(orbit$parent_orbit), period_range, FALSE)
+      parent_orbit_centre$period <- NULL
 
       new_x <- paste0("x_", orbit$parent_orbit)
       new_y <- paste0("y_", orbit$parent_orbit)
 
-        names(parent_orbit_centre)[names(parent_orbit_centre) == "x"] <- new_x
-        names(parent_orbit_centre)[names(parent_orbit_centre) == "y"] <- new_y
+      names(parent_orbit_centre)[names(parent_orbit_centre) == "x"] <- new_x
+      names(parent_orbit_centre)[names(parent_orbit_centre) == "y"] <- new_y
+
+      theta <- get_orbit_theta(get(orbit$parent_orbit), period_range)
 
       x <- cos(theta) * eucl_dist(orbit$offset, c(0, 0)) + parent_orbit_centre[[paste0("x_", orbit$parent_orbit)]]
       y <- sin(theta) * eucl_dist(orbit$offset, c(0, 0)) + parent_orbit_centre[[paste0("y_", orbit$parent_orbit)]]
 
-      orbit_center <- tibble(x = x, y = y)
+      orbit_center <- tibble(period = period_range, x = x, y = y)
       if(top_orbit){
         new_x <- paste0("x_", deparse(substitute(orbit)))
         new_y <- paste0("y_", deparse(substitute(orbit)))
         names(orbit_center)[names(orbit_center) == "x"] <- new_x
         names(orbit_center)[names(orbit_center) == "y"] <- new_y
+
       }
-      output_df <- dplyr::bind_cols(parent_orbit_centre, orbit_center)
+      output_df <- dplyr::bind_cols(orbit_center, parent_orbit_centre)
       return(output_df)
     } else stop(paste("Parent orbit", orbit$parent_orbit, "does not exist"))
   } else {
@@ -41,6 +45,25 @@ get_orbit_position <- function(orbit, period_range = 1:100, top_orbit = TRUE) {
     y <- rep(orbit$offset[2], length(period_range))
     out_df <- tibble(x = x, y = y)
   }
+}
+
+get_machine_positions <- function(pantograph, period_range = 1:100){
+  stopifnot(class(period_range) == "integer")
+  stopifnot(class(pantograph) == "pantograph")
+  orbit1_pos <- get_orbit_position(pantograph$orbit1, period_range)
+  names(orbit1_pos)[2:3] <- paste0(c("x", "y"), "_", pantograph$orbit1_name)
+
+  orbit2_pos <- get_orbit_position(pantograph$orbit2, period_range)
+  names(orbit2_pos)[2:3] <- paste0(c("x", "y"), "_", pantograph$orbit2_name)
+
+  orbit_pos <- dplyr::bind_cols(orbit1_pos, orbit2_pos)
+  orbit_pos <- orbit_pos[,unique(names(orbit_pos))]
+
+  orbit_pos_g <- tidyr::gather(orbit_pos, key, value, -period)
+  orbit_pos_g <- tidyr::separate(orbit_pos_g, key, c("axis", "orbit"), sep = "_", extra = "merge")
+  orbit_pos <- tidyr::spread(orbit_pos_g, axis, value)
+
+  return(orbit_pos)
 }
 
 #' Get positions of complete orbit at theta = 0
@@ -95,7 +118,7 @@ get_total_offset <- function(orbit) {
 #'
 #' @examples
 #' get_theta(10, 100)
-get_orbit_theta <- function(period_range, orbit) {
+get_orbit_theta <- function(orbit, period_range) {
   stopifnot(class(period_range) == "integer")
   stopifnot(class(orbit) == "orbit")
   base_theta <- (2 * pi / orbit$speed) * (period_range %% orbit$speed)
@@ -170,8 +193,6 @@ get_theta_diff <- function(x1, y1, x2, y2) {
 #' @param segment_number The number of scissor segments
 #'
 #' @return numeric
-#' @export
-#'
 #' @examples
 #' get_scissor_offset(0, 0, 1, 1, 3, 1)
 get_scissor_offset <- function(x1, y1, x2, y2, segment_length, segment_number) {
