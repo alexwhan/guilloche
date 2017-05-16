@@ -4,12 +4,12 @@
 \alias{get_orbit_theta}
 \title{Get theta of orbit}
 \usage{
-get_orbit_theta(period_range, orbit)
+get_orbit_theta(orbit, period_range)
 }
 \arguments{
-\item{period_range}{Integer vector of periods}
-
 \item{orbit}{An object of class orbit}
+
+\item{period_range}{Integer vector of periods}
 }
 \value{
 angle in radians

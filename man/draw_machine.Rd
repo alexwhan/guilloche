@@ -16,10 +16,12 @@ ggplot objects
 Draw basic state of drawing machine
 }
 \examples{
-orbit1 <- define_orbit(c(0, 25), 1000)
-orbit2 <- define_orbit(c(0, 8), 100, parent_orbit = orbit1)
-orbit3 <- define_orbit(c(0, 1), 20, parent_orbit = orbit2)
-pan <- define_pantograph(orbit3, orbit3, c(0, 1), c(0, 5), 3, 4)
+orbit_base <- define_orbit(c(0, 0), 1000)
+orbit1 <- define_orbit(c(0, 8), 100, parent_orbit = orbit_base)
+orbit2 <- define_orbit(c(0, 1), 20, parent_orbit = orbit1)
+orbit3 <- define_orbit(c(-25, 0), 200, parent_orbit = orbit_base)
+orbit4 <- define_orbit(c(-8, 0), 20, orbit3)
+pan <- define_pantograph(orbit2, orbit4, c(0, 1), c(0, 5), 3, 4)
 draw_machine(pan)
 }
 

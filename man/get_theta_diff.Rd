@@ -4,16 +4,12 @@
 \alias{get_theta_diff}
 \title{Get angle of point 2 from point 1}
 \usage{
-get_theta_diff(x1, y1, x2, y2)
+get_theta_diff(pos1, pos2)
 }
 \arguments{
-\item{x1}{x position of point 1}
+\item{pos1}{The first position, numeric length 2}
 
-\item{y1}{y position of point 1}
-
-\item{x2}{x position of point 2}
-
-\item{y2}{y position of point 2}
+\item{pos2}{The second position, numeric length 2}
 }
 \value{
 numeric
@@ -22,6 +18,6 @@ numeric
 Get angle of point 2 from point 1
 }
 \examples{
-get_theta_diff(0, 0, 1, 1)
+get_theta_diff(c(0, 0), c(1, 1))
 }
 
