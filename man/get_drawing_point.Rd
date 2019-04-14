@@ -2,33 +2,26 @@
 % Please edit documentation in R/plotters.R
 \name{get_drawing_point}
 \alias{get_drawing_point}
-\title{Get x of drawing point}
+\title{Get position of drawing point}
 \usage{
-get_drawing_point(x1, y1, x2, y2, segment_length, segment_number,
-  return = "both")
+get_drawing_point(pantograph, period_range = 1:100)
 }
 \arguments{
-\item{x1}{x position of point 1}
-
-\item{y1}{y position of point 1}
-
-\item{x2}{x position of point 2}
-
-\item{y2}{y position of point 2}
-
-\item{segment_length}{The length of scissor segments}
-
-\item{segment_number}{The number of scissor segments}
-
-\item{return}{a string specifying whether to return "x", "y" or "both"}
+\item{pantograph}{An object of class pantograph}
 }
 \value{
-numeric
+A tibble
 }
 \description{
-Get x of drawing point
+Get position of drawing point
 }
 \examples{
-get_scissor_offset(0, 0, 1, 1, 2, 3)
+orbit_base <- define_orbit(c(0, 0), 1000)
+orbit1 <- define_orbit(c(8, 0), 100, parent_orbit = orbit_base)
+orbit2 <- define_orbit(c(1, 0), 20, parent_orbit = orbit_base)
+orbit3 <- define_orbit(c(-8, 0), 90, orbit_base)
+orbit4 <- define_orbit(c(-1, 0), 200, orbit3)
+pan1 <- define_pantograph(orbit2, orbit4, c(0, 1), c(0, 5), 3, 4)
+dp <- get_drawing_point(pan1)
 }
 

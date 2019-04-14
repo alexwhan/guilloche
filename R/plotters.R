@@ -200,39 +200,45 @@ get_theta_diff <- function(pos1, pos2) {
 #'
 #' @return numeric
 #' @examples
-#' get_scissor_offset(c(0, 0), c(1, 1), 3, 1)
-get_anchor_position <- function(pos1, pos2, segment_length, segment_number) {
+#' get_pantograph_distance(c(0, 0), c(1, 1), 3, 1)
+get_pantograph_distance <- function(pos1, pos2, segment_length, segment_number) {
   mid_dist <- eucl_dist(pos1, pos2) / 2
   seg_offset <- (segment_length ^ 2 - mid_dist ^ 2) ^ 0.5
   return(seg_offset * segment_number)
 }
 
-#' Get x of drawing point
+#' Get position of drawing point
 #'
-#' @param x1 x position of point 1
-#' @param y1 y position of point 1
-#' @param x2 x position of point 2
-#' @param y2 y position of point 2
-#' @param segment_length The length of scissor segments
-#' @param segment_number The number of scissor segments
-#' @param return a string specifying whether to return "x", "y" or "both"
+#' @param pantograph An object of class pantograph
 #'
-#' @return numeric
+#' @return A tibble
 #' @export
 #'
 #' @examples
-#' get_scissor_offset(0, 0, 1, 1, 2, 3)
-get_drawing_point <- function(x1, y1, x2, y2, segment_length, segment_number,
-                              return = "both") {
-  mid_point_x <- x1 - (x1 - x2) / 2
-  mid_point_y <- y1 - (y1 - y2) / 2
-  offset <- get_scissor_offset(x1, y1, x2, y2, segment_length, segment_number)
-  theta <- get_theta_diff(x1, y1, x2, y2)
-  drawing_x <- offset * cos((pi / 2) - theta) + mid_point_x
-  drawing_y <- offset * sin((pi / 2) - theta) + mid_point_y
-  if(return == "x") return(drawing_x)
-  if(return == "y") return(drawing_y)
-  else return(c(drawing_x, drawing_y))
+#' orbit_base <- define_orbit(c(0, 0), 1000)
+#' orbit1 <- define_orbit(c(8, 0), 100, parent_orbit = orbit_base)
+#' orbit2 <- define_orbit(c(1, 0), 20, parent_orbit = orbit_base)
+#' orbit3 <- define_orbit(c(-8, 0), 90, orbit_base)
+#' orbit4 <- define_orbit(c(-1, 0), 200, orbit3)
+#' pan1 <- define_pantograph(orbit2, orbit4, c(0, 1), c(0, 5), 3, 4)
+#' dp <- get_drawing_point(pan1)
+get_drawing_point <- function(pantograph, period_range = 1:100) {
+  pos_dat <- get_machine_positions(pantograph, period_range)
+  pos_dat <- dplyr::filter(pos_dat, orbit %in% c("anchor1", "anchor2"))
+  pos_dat <- dplyr::group_by(pos_dat, period)
+  pos_dat <- tidyr::gather(pos_dat, axis, value, x, y)
+  pos_dat <- tidyr::unite(pos_dat, var, axis, orbit)
+  pos_dat <- tidyr::spread(pos_dat, var, value)
+  pos_dat <- dplyr::mutate(pos_dat,
+                           pan_offset = guilloche:::get_pantograph_distance(c(x_anchor1, y_anchor1),
+                                                                               c(x_anchor2, y_anchor2),
+                                                                            pantograph$segment_length,
+                                                                            pantograph$n_segments),
+                           mid_point_x = x_anchor1 - (x_anchor1 - x_anchor2) / 2,
+                           mid_point_y = y_anchor2 - (y_anchor2 - y_anchor2) / 2,
+                           theta = get_theta_diff(c(x_anchor1, y_anchor1), c(x_anchor2, y_anchor2)),
+                           drawing_x = pan_offset * cos(( pi / 2 ) - theta) + mid_point_x,
+                           drawing_y = pan_offset * sin(( pi / 2 ) - theta) + mid_point_y)
 }
 
 #' Transform a position by orbiting around an origin
